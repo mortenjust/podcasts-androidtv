@@ -184,6 +184,7 @@ public class VideoDetailsFragment extends DetailsFragment {
                 .load(uri.toString())
                 .resize(mMetrics.widthPixels, mMetrics.heightPixels)
                 .error(mDefaultBackground)
+                .centerCrop()
                 .into(mBackgroundTarget);
     }
 

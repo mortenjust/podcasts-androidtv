@@ -418,6 +418,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
                 .load(uri.toString())
                 .resize(Utils.convertDpToPixel(sContext, CARD_WIDTH),
                         Utils.convertDpToPixel(sContext, CARD_HEIGHT))
+                .centerCrop()
                 .into(mPlaybackControlsRowTarget);
     }
 
