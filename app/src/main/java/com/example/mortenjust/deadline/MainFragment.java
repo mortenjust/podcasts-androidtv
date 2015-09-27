@@ -93,19 +93,18 @@ public class MainFragment extends BrowseFragment {
         }
     }
 
-    private void populateRow(List<Movie> list) {
+    private void populateRow(List<Movie> list, int rowNumber, String showName) {
 
         // object here is to load rows by having a 'list' object we can pass on to the below. In a new function tough!
 
-        mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
-        mCardPresenter = new CardPresenter();
+
 
         ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(mCardPresenter);
         for(Movie m : list){
             listRowAdapter.add(m);
         }
 
-        HeaderItem header = new HeaderItem(0, "Deadline");
+        HeaderItem header = new HeaderItem(rowNumber, showName);
         mRowsAdapter.add(new ListRow(header, listRowAdapter));
 
 //        HeaderItem gridHeader = new HeaderItem(list.size()+1, "PREFERENCES");
@@ -120,17 +119,31 @@ public class MainFragment extends BrowseFragment {
     }
 
     private void loadRows() {
-        // TODO: for each show in showStore
-        // each row is a show, represented by a movielist
-        // populateRow is called from the network activity callback
 
-        MovieList m = new MovieList(getActivity().getApplicationContext());
-        m.setupMovies(new OnTvResponseListener() {
-            @Override
-            public void hereAreTheMovies(List<Movie> movieList) {
-                populateRow(movieList);
-            }
-        });
+        // strategy:
+        // get all feeds from the feed store
+        // for each feed, start downloading the feed and call populateRow when done
+        // the order of the rows is the inner_i, so order in feed store is boss
+
+        List<TvShowFeed> allFeeds = TvShowFeedStore.getAllFeeds();
+
+        // prepare these for when we add rows with populateRow
+        mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
+        mCardPresenter = new CardPresenter();
+
+        int i = 0;
+        for(final TvShowFeed feed : allFeeds){
+            i++;
+            final int inner_i = i; // callback vars must be final
+            MovieList m = new MovieList(getActivity().getApplicationContext());
+            m.setupMovies(feed.feedUrl, new OnTvResponseListener() {
+                @Override
+                public void hereAreTheMovies(List<Movie> movieList) {
+                    populateRow(movieList, inner_i, feed.showName);
+                }
+            });
+
+        }
     }
 
     private void prepareBackgroundManager() {

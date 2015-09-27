@@ -107,7 +107,12 @@ public class TvShow {
     }
 
     public String getShowImage(){
-        return channel.showImages.get(0).url;
+        if(channel.showImages != null){
+            return channel.showImages.get(0).url;
+        }
+        else {
+            return "http://mortenjust.com/podcast-androidtv/noImage.png";
+        }
     }
 
     public String getCopyright(){

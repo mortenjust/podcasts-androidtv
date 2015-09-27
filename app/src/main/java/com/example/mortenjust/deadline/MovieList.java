@@ -36,10 +36,10 @@ public class MovieList {
         this.context = context;
     }
 
-    public void setupMovies(final OnTvResponseListener listener) {
+    public void setupMovies(final String url, final OnTvResponseListener listener) {
 
 
-        String url = "http://www.dr.dk/mu/Feed/deadline?format=podcast&limit=500";
+        //String url = "http://www.dr.dk/mu/Feed/deadline?format=podcast&limit=500";
         SimpleXmlRequest<TvShow> showRequest = new SimpleXmlRequest<TvShow>(Request.Method.GET, url, TvShow.class,
                 new Response.Listener<TvShow>() {
                     @Override
