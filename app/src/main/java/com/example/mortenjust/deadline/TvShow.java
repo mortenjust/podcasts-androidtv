@@ -1,5 +1,7 @@
 package com.example.mortenjust.deadline;
 
+import android.util.Log;
+
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
@@ -7,7 +9,12 @@ import org.simpleframework.xml.Path;
 import org.simpleframework.xml.Root;
 import org.simpleframework.xml.core.Commit;
 
+import java.awt.font.TextAttribute;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by mortenjust on 9/26/15.
@@ -16,6 +23,7 @@ import java.util.List;
 
 @Root(strict = false)
 public class TvShow {
+    String TAG = "mj.tvshow.class";
 
     @Element(name = "channel")
     Channel channel;
@@ -74,7 +82,7 @@ public class TvShow {
         String title;
         @Element(name = "description", required = false)
         String description;
-        @Element(name = "pubdate", required = false)
+        @Element(name = "pubDate", required = false)
         String pubDate;
         @Element(name = "enclosure", required = false)
         Enclosure enclosure;
@@ -119,9 +127,29 @@ public class TvShow {
         return channel.copyright;
     }
 
-    public String getLatestEpisode(){
-        return channel.episodes.get(0).enclosure.url;
+    public Episode getLatestEpisode(){
+        return channel.episodes.get(0);
     }
+
+    public Date getNewestDateTime(){
+        String stringDate = getLatestEpisode().getPubDate();
+
+        Log.d(TAG, "stringdate is "+stringDate);
+
+
+        SimpleDateFormat format = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
+        try{
+            Date date = format.parse(stringDate);
+            Log.d(TAG, "parsed date: "+date);
+            return date;
+
+        } catch(ParseException e) {
+            Log.d(TAG, "parse exception for date");
+            e.printStackTrace();
+        }
+    return null;
+    }
+
 
     public List<Episode> getAllEpisodes(){
         return channel.episodes;

@@ -15,7 +15,9 @@
 package com.example.mortenjust.deadline;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -43,6 +45,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,6 +61,7 @@ public class MainFragment extends BrowseFragment {
     private static final int NUM_ROWS = 6;
     private static final int NUM_COLS = 15;
 
+    private ArrayList<SortableListRow> mRows = new ArrayList<>();
     private ArrayObjectAdapter mRowsAdapter;
     private Drawable mDefaultBackground;
     private Target mBackgroundTarget;
@@ -91,44 +95,43 @@ public class MainFragment extends BrowseFragment {
             Log.d(TAG, "onDestroy: " + mBackgroundTimer.toString());
             mBackgroundTimer.cancel();
         }
+
     }
 
-    private void populateRow(List<Movie> list, int rowNumber, String showName) {
-
-        // object here is to load rows by having a 'list' object we can pass on to the below. In a new function tough!
-
-
-
+    private void populateRow(List<Movie> list, int rowNumber, String showName, Date mostRecentEpisodeDateTime) {
         ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(mCardPresenter);
+
         for(Movie m : list){
             listRowAdapter.add(m);
         }
 
         HeaderItem header = new HeaderItem(rowNumber, showName);
-        mRowsAdapter.add(new ListRow(header, listRowAdapter));
 
-//        HeaderItem gridHeader = new HeaderItem(list.size()+1, "PREFERENCES");
-//        GridItemPresenter mGridPresenter = new GridItemPresenter();
-//        ArrayObjectAdapter gridRowAdapter = new ArrayObjectAdapter(mGridPresenter);
-//        gridRowAdapter.add(getResources().getString(R.string.grid_view));
-//        gridRowAdapter.add(getString(R.string.error_fragment));
-//        gridRowAdapter.add(getResources().getString(R.string.personal_settings));
-//        mRowsAdapter.add(new ListRow(gridHeader, gridRowAdapter));
+        // add the new listRow along with the most recent episode date so we can sort later
+        mRows.add(new SortableListRow(header, listRowAdapter, mostRecentEpisodeDateTime));
+
+        // delete later: what it looked like before subclassing of ListRow mRowsAdapter.add(new ListRow(header, listRowAdapter));
+
+
+        mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
+
+        // TODO: sort the mRows arrayList before adding to the rowsadapter and setting the adapter
+        Collections.sort(mRows);
+
+        mRowsAdapter.addAll(0, mRows);
 
         setAdapter(mRowsAdapter);
     }
 
     private void loadRows() {
-
         // strategy:
         // get all feeds from the feed store
         // for each feed, start downloading the feed and call populateRow when done
-        // the order of the rows is the inner_i, so order in feed store is boss
 
         List<TvShowFeed> allFeeds = TvShowFeedStore.getAllFeeds();
 
         // prepare these for when we add rows with populateRow
-        mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
+
         mCardPresenter = new CardPresenter();
 
         int i = 0;
@@ -137,12 +140,12 @@ public class MainFragment extends BrowseFragment {
             final int inner_i = i; // callback vars must be final
             MovieList m = new MovieList(getActivity().getApplicationContext());
             m.setupMovies(feed.feedUrl, new OnTvResponseListener() {
+                // We've got our episodes! Now add them to the UI and immediately sort
                 @Override
-                public void hereAreTheMovies(List<Movie> movieList) {
-                    populateRow(movieList, inner_i, feed.showName);
+                public void hereAreTheMovies(List<Movie> movieList, Date mostRecentEpisodeDateTime) {
+                    populateRow(movieList, inner_i, feed.showName, mostRecentEpisodeDateTime);
                 }
             });
-
         }
     }
 

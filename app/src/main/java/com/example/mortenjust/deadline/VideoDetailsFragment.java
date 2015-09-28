@@ -145,7 +145,7 @@ public class VideoDetailsFragment extends DetailsFragment {
 //            Collections.shuffle(list);
             ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
             for (int j = 0; j < NUM_COLS; j++) {
-//                listRowAdapter.add(list.get(j % 5));
+//                listRowAdapter.add(list.get(j % 5)); // TODO: Show more episodes from same show
             }
 
             HeaderItem header = new HeaderItem(0, subcategories[0]);

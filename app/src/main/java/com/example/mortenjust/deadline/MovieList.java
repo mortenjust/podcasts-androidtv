@@ -21,15 +21,6 @@ public class MovieList {
     String TAG = "mj.store";
     Context context;
 
-    public static final String MOVIE_CATEGORY[] = {
-            "Deadline",
-            "Debatten",
-            "Category Two",
-            "Category Three",
-            "Category Four",
-            "Category Five",
-    };
-
     public static List<Movie> list;
 
     public MovieList(Context context){
@@ -47,7 +38,6 @@ public class MovieList {
                         Log.d(TAG, "Let's get some data for " + tvShow.getShowTitle());
 
                         List<Movie> movieList = new ArrayList<Movie>();
-                        // movieList.add(buildMovieInfo("Debatten", "title", "description", "Studio Zero", "url", "cardImage", "backgroundimage"));
 
                         // add all episodes to a list
                         for(TvShow.Episode e : tvShow.getAllEpisodes()){
@@ -63,8 +53,9 @@ public class MovieList {
                         }
 
                         // We're done! Send the list back to the listener in the view layer.
+                        // the getNewest is so we can sort
                         list = movieList;
-                        listener.hereAreTheMovies(movieList);
+                        listener.hereAreTheMovies(movieList, tvShow.getNewestDateTime());
                     }
                 },
                 new Response.ErrorListener() {
