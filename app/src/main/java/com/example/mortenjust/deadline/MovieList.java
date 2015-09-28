@@ -28,7 +28,7 @@ public class MovieList {
     }
 
     public void setupMovies(final String url, final OnTvResponseListener listener) {
-
+        list = new ArrayList<>(); // keep an invisible list of everyhinh for later
 
         //String url = "http://www.dr.dk/mu/Feed/deadline?format=podcast&limit=500";
         SimpleXmlRequest<TvShow> showRequest = new SimpleXmlRequest<TvShow>(Request.Method.GET, url, TvShow.class,
@@ -37,25 +37,30 @@ public class MovieList {
                     public void onResponse(TvShow tvShow) {
                         Log.d(TAG, "Let's get some data for " + tvShow.getShowTitle());
 
-                        List<Movie> movieList = new ArrayList<Movie>();
+                        List<Movie> showList = new ArrayList<>();
+
 
                         // add all episodes to a list
                         for(TvShow.Episode e : tvShow.getAllEpisodes()){
                             ///Log.d(TAG, "Found episode: "+e.getVideoLink());
-                            movieList.add(buildMovieInfo(
-                                        "Deadline",
-                                        e.getEpisodeTitle(),
-                                        e.getDescription(),
-                                        tvShow.getCopyright(),
-                                        e.getVideoLink(),
-                                        tvShow.getShowImage(),
-                                        tvShow.getShowImage()));
+                            Movie newMovie = buildMovieInfo(
+                                    "Deadline",
+                                    e.getEpisodeTitle(),
+                                    e.getDescription(),
+                                    tvShow.getCopyright(),
+                                    e.getVideoLink(),
+                                    tvShow.getShowImage(),
+                                    tvShow.getShowImage());
+
+                            list.add(newMovie); // global list of all episodes
+                            showList.add(newMovie); // just this one show
+
                         }
 
-                        // We're done! Send the list back to the listener in the view layer.
+                        // We're done! Send just this one show back to the listener
                         // the getNewest is so we can sort
-                        list = movieList;
-                        listener.hereAreTheMovies(movieList, tvShow.getNewestDateTime());
+
+                        listener.hereAreTheMovies(showList, tvShow.getNewestDateTime());
                     }
                 },
                 new Response.ErrorListener() {

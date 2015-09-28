@@ -136,7 +136,6 @@ public class TvShow {
 
         Log.d(TAG, "stringdate is "+stringDate);
 
-
         SimpleDateFormat format = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
         try{
             Date date = format.parse(stringDate);

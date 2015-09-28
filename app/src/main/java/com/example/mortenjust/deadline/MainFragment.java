@@ -115,7 +115,7 @@ public class MainFragment extends BrowseFragment {
 
         mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
 
-        // TODO: sort the mRows arrayList before adding to the rowsadapter and setting the adapter
+        // sort the mRows arrayList before adding to the rowsadapter and setting the adapter
         Collections.sort(mRows);
 
         mRowsAdapter.addAll(0, mRows);

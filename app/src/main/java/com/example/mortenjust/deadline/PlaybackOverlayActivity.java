@@ -60,6 +60,7 @@ public class PlaybackOverlayActivity extends Activity implements
      * Implementation of OnPlayPauseClickedListener
      */
     public void onFragmentPlayPause(Movie movie, int position, Boolean playPause) {
+        Log.d(TAG, "mj.ready to get video url: "+movie.getVideoUrl()+" for "+movie.getTitle());
         mVideoView.setVideoPath(movie.getVideoUrl());
 
         if (position == 0 || mPlaybackState == PlaybackState.IDLE) {

@@ -53,6 +53,7 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import java.awt.font.TextAttribute;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -114,6 +115,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
         mSelectedMovie = (Movie) getActivity()
                 .getIntent().getSerializableExtra(DetailsActivity.MOVIE);
 
+        Log.d(TAG, "selected movie title: "+mSelectedMovie.getTitle());
         List<Movie> movies = MovieList.list;
 
         ArrayObjectAdapter listRowAdapter = new ArrayObjectAdapter(new CardPresenter());
@@ -180,7 +182,7 @@ public class PlaybackOverlayFragment extends android.support.v17.leanback.app.Pl
                         startProgressAutomation();
                         setFadingEnabled(true);
                         mCallback.onFragmentPlayPause(mItems.get(mCurrentItem),
-                                mPlaybackControlsRow.getCurrentTime(), true);
+                        mPlaybackControlsRow.getCurrentTime(), true);
                     } else {
                         stopProgressAutomation();
                         setFadingEnabled(false);
